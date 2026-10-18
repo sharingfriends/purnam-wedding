@@ -1,0 +1,6 @@
+.vercel
+node_modules
+*.log
+deploy.js
+server.js
+200.html

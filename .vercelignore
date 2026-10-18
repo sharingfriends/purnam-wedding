@@ -1,0 +1,5 @@
+deploy.js
+server.js
+node_modules
+*.log
+.vercelignore
