@@ -342,11 +342,10 @@ body {
   transition: all 0.3s ease;
   animation: fadeInUp 0.7s ease both;
 }
-.elder-badge:nth-child(1) { animation-delay: 0.2s; }
+.elder-badge:nth-child(1) { animation-delay: 0.15s; }
 .elder-badge:nth-child(2) { animation-delay: 0.35s; }
-.elder-badge:nth-child(3) { animation-delay: 0.5s; }
-.elder-badge:nth-child(4) { animation-delay: 0.65s; }
-.elder-badge:nth-child(5) { animation-delay: 0.8s; }
+.elder-badge:nth-child(3) { animation-delay: 0.55s; }
+.elder-badge:nth-child(4) { animation-delay: 0.75s; }
 
 .elder-badge strong {
   color: var(--gold-light);
@@ -360,20 +359,30 @@ body {
   margin-top: 2px;
 }
 
-/* Highlighted placeholder style for easy customization */
-.elder-highlight {
-  border: 1px dashed var(--gold);
-  background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(184,134,11,0.08));
-  box-shadow: 0 0 18px rgba(212,175,55,0.2);
+.elders-timer-bar {
+  width: 100%;
+  max-width: 280px;
+  height: 2px;
+  background: rgba(212,175,55,0.18);
+  border-radius: 2px;
+  margin: 18px auto 6px;
+  overflow: hidden;
 }
-.elder-highlight .placeholder-tag {
+.elders-timer-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold));
+  border-radius: 2px;
+  transition: width 3.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.elders-auto-hint {
   font-family: 'Montserrat', sans-serif;
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gold-light);
-  display: inline-block;
-  margin-bottom: 4px;
+  color: var(--gold);
+  opacity: 0.65;
+  margin-bottom: 8px;
 }
 
 .elders-prayer-quote {
@@ -1367,13 +1376,6 @@ body {
     <div class="elders-tagline">Guiding us with love, light & eternal blessings</div>
 
     <div class="elders-grid">
-      <!-- Prominent customizable Elder Placeholder -->
-      <div class="elder-badge elder-highlight">
-        <span class="placeholder-tag">✦ Elder Blessings ✦</span><br>
-        <strong>[ Put Elder Name Here ]</strong>
-        <em>Grandparent & Family Elder</em>
-      </div>
-
       <!-- Family Elders & Ancestors -->
       <div class="elder-badge">
         <strong>Late Sh. Rajnik Bhalla</strong>
@@ -1400,7 +1402,12 @@ body {
       "With folded hands and heartfelt gratitude, our families seek your affectionate presence and cherished blessings as Purnima and Shivam begin their sacred journey of love and togetherness."
     </p>
 
-    <button class="tap-btn enter-invite-btn" onclick="enterInvitation()">
+    <div class="elders-timer-bar">
+      <div class="elders-timer-fill"></div>
+    </div>
+    <div class="elders-auto-hint">Opening invitation...</div>
+
+    <button class="tap-btn enter-invite-btn" onclick="enterInvitation()" style="margin-top: 14px;">
       CONTINUE TO INVITATION ✦
     </button>
   </div>
@@ -1838,6 +1845,9 @@ body {
 /* ═══════════════════════════════════════════
    STEP 1 -> STEP 2: OPEN ENVELOPE -> ELDERS SCREEN
    ═══════════════════════════════════════════ */
+let autoAdvanceTimer = null;
+let isEnteringInvitation = false;
+
 function openEnvelope() {
   const envelope = document.getElementById('envelope-section');
   const elders = document.getElementById('elders-section');
@@ -1846,6 +1856,17 @@ function openEnvelope() {
   setTimeout(() => {
     envelope.style.display = 'none';
     elders.classList.add('active');
+
+    // Start 3-second golden progress fill
+    const fill = document.querySelector('.elders-timer-fill');
+    if (fill) {
+      setTimeout(() => { fill.style.width = '100%'; }, 60);
+    }
+
+    // Automatically transition to the invitation after 3 seconds
+    autoAdvanceTimer = setTimeout(() => {
+      enterInvitation();
+    }, 3200);
   }, 700);
 }
 
@@ -1853,6 +1874,10 @@ function openEnvelope() {
    STEP 2 -> STEP 3: ELDERS SCREEN -> MAIN INVITATION
    ═══════════════════════════════════════════ */
 function enterInvitation() {
+  if (isEnteringInvitation) return;
+  isEnteringInvitation = true;
+  if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+
   const elders = document.getElementById('elders-section');
   const main = document.getElementById('main-content');
   const musicBtn = document.getElementById('music-toggle');
